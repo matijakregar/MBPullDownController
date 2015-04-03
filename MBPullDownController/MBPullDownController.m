@@ -325,10 +325,12 @@ static CGFloat const kDefaultCloseDragOffsetPercentage = .05;
 	frame.origin.y = MAX(0.f, -offset.y);
 	self.backgroundView.frame = frame;
     
-    CGRect accessoryFrame = self.accessoryView.frame;
-    accessoryFrame.origin.y = -offset.y - self.accessoryOffset.y - CGRectGetHeight(self.accessoryView.frame);
-    accessoryFrame.origin.x = self.accessoryOffset.x;
-    self.accessoryView.frame = accessoryFrame;
+    if (self.accessoryView) {
+        CGRect accessoryFrame = self.accessoryView.frame;
+        accessoryFrame.origin.y = -offset.y - self.accessoryOffset.y - CGRectGetHeight(self.accessoryView.frame);
+        accessoryFrame.origin.x = self.accessoryOffset.x;
+        self.accessoryView.frame = accessoryFrame;
+    }
 }
 
 #pragma mark - ScrollView
