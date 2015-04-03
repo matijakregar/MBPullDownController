@@ -92,6 +92,7 @@ static CGFloat const kDefaultCloseDragOffsetPercentage = .05;
     if (self.accessoryView) {
         [self.view addSubview:self.accessoryView];
     }
+    [self updateForScrollOfset:[self scrollView].contentOffset];
     
 }
 
