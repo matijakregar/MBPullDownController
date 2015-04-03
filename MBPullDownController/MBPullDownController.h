@@ -32,6 +32,16 @@
 
 @interface MBPullDownController : UIViewController
 
+/** 
+ * Offset of accessory view from the top of the scrollview and right of the screen
+ */
+@property (nonatomic, assign) CGPoint accessoryOffset;
+
+/**
+ * Accessory view on the top of view hierarchy that is aligned vertically to the top of the scrollView
+ */
+@property (nonatomic, strong) UIView *accessoryView;
+
 /**
  * The frontmost view controller. The controller's view needs to be a UIScrollView subclass.
  */
@@ -141,6 +151,11 @@
  * @param animated If set to YES, offset change is animated, otherwise the action is instant.
  */
 - (void)setOpenBottomOffset:(CGFloat)openBottomOffset animated:(BOOL)animated;
+
+/**
+ * Exposed method so it can be overriden in subclass
+ */
+- (void)updateForScrollOfset:(CGPoint)offset;
 
 @end
 

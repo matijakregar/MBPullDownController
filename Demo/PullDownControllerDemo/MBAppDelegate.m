@@ -29,6 +29,9 @@
 	MBImagesViewController *front = [[MBImagesViewController alloc] init];
 	MBSettingsController *back = [[MBSettingsController alloc] init];
 	MBPullDownController *pullDownController = [[MBPullDownController alloc] initWithFrontController:front backController:back];
+    pullDownController.closedTopOffset = 220.0f;
+    pullDownController.accessoryView = [UIButton buttonWithType:UIButtonTypeInfoDark];
+    pullDownController.accessoryOffset = CGPointMake(150, 10);
 	UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:pullDownController];
 	navigationController.navigationBarHidden = YES;
 	// Adjust top spacing for iOS 7 status bar

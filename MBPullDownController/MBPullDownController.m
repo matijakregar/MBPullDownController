@@ -89,10 +89,26 @@ static CGFloat const kDefaultCloseDragOffsetPercentage = .05;
 	[super viewDidLoad];
 	[self changeBackControllerFrom:nil to:self.backController];
 	[self changeFrontControllerFrom:nil to:self.frontController];
+    if (self.accessoryView) {
+        [self.view addSubview:self.accessoryView];
+    }
+    
 }
 
 - (void)dealloc {
 	[self cleanUpScrollView:[self scrollView]];
+}
+
+#pragma mark - AccessoryView
+
+- (void)setAccessoryView:(UIView *)accessoryView
+{
+    if (_accessoryView) {
+        [_accessoryView removeFromSuperview];
+    }
+    _accessoryView = accessoryView;
+    
+    [self.view addSubview:_accessoryView];
 }
 
 #pragma mark - Layout
@@ -257,6 +273,9 @@ static CGFloat const kDefaultCloseDragOffsetPercentage = .05;
 		if (newView) {
 			newView.frame = containerView.bounds;
 			[containerView addSubview:newView];
+            if (self.accessoryView) {
+                [containerView addSubview:self.accessoryView];
+            }
 			[new didMoveToParentViewController:self];
 		}
 	}
@@ -297,14 +316,19 @@ static CGFloat const kDefaultCloseDragOffsetPercentage = .05;
 	if (scrollView && backgroundView) {
 		backgroundView.frame = containerView.bounds;
 		[containerView insertSubview:backgroundView belowSubview:scrollView];
-		[self updateBackgroundViewForScrollOfset:scrollView.contentOffset];
+		[self updateForScrollOfset:scrollView.contentOffset];
 	}
 }
 
-- (void)updateBackgroundViewForScrollOfset:(CGPoint)offset {
+- (void)updateForScrollOfset:(CGPoint)offset {
 	CGRect frame = self.backgroundView.frame;
 	frame.origin.y = MAX(0.f, -offset.y);
 	self.backgroundView.frame = frame;
+    
+    CGRect accessoryFrame = self.accessoryView.frame;
+    accessoryFrame.origin.y = -offset.y - self.accessoryOffset.y - CGRectGetHeight(self.accessoryView.frame);
+    accessoryFrame.origin.x = self.accessoryOffset.x;
+    self.accessoryView.frame = accessoryFrame;
 }
 
 #pragma mark - ScrollView
@@ -394,7 +418,7 @@ static CGFloat const kDefaultCloseDragOffsetPercentage = .05;
 				self.adjustedScroll = YES; // prevent infinite recursion
 				scrollView.contentOffset = adjusted;
 			}
-			[self updateBackgroundViewForScrollOfset:adjusted];
+			[self updateForScrollOfset:adjusted];
 		} else {
 			self.adjustedScroll = NO;
 		}
@@ -508,6 +532,10 @@ static CGFloat const kDefaultCloseDragOffsetPercentage = .05;
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
 	UIScrollView *scrollView = [self.pullDownController scrollView];
+    UIView *hitView = [super hitTest:point withEvent:event];
+    if (hitView == self.pullDownController.accessoryView) {
+        return hitView;
+    }
 	if (scrollView) {
 		CGPoint pointInScrollVeiw = [scrollView convertPoint:point fromView:self];
 		if (pointInScrollVeiw.y <= 0.f) {
